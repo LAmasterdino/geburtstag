@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Geburtstage</title>
+<style>
+:root{--bg:#f2f3f9;--card:#fff;--text:#15152a;--muted:#6b6d85;--line:#e1e3ef;--accent:#5b4bdb;--on:#fff;--r:14px;--font:ui-rounded,"SF Pro Rounded",Nunito,system-ui,sans-serif;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101120;--card:#1b1c30;--text:#f0f0fa;--muted:#9a9cb8;--line:#2c2e4a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101120;--card:#1b1c30;--text:#f0f0fa;--muted:#9a9cb8;--line:#2c2e4a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.45}
+main{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:8px 0 12px}
+h2{font-size:1.1rem;margin:0 0 8px}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:calc(var(--r) + 4px);padding:4px;margin-bottom:16px}
+.tab{flex:1;border:0;background:none;color:var(--muted);font:inherit;font-weight:600;padding:10px;border-radius:var(--r);cursor:pointer}
+.tab.on{background:var(--accent);color:var(--on)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.hero{background:var(--accent);color:var(--on);border-radius:calc(var(--r) + 6px);padding:22px;margin-bottom:12px}
+.hero .big{font-size:3.6rem;font-weight:800;line-height:1}
+.hero p{margin:6px 0 0;opacity:.92}
+.card,.row{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.row{display:flex;gap:12px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.row.today{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.av{flex:none;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--on);display:grid;place-items:center;font-weight:700}
+.grow{flex:1;min-width:0}.grow b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sub{color:var(--muted);font-size:.9rem}
+.chip{flex:none;font-size:.85rem;font-weight:700;padding:4px 10px;border-radius:99px;background:var(--bg);border:1px solid var(--line)}
+.today .chip{background:var(--accent);color:var(--on);border-color:var(--accent)}
+label{display:block;font-weight:600;font-size:.9rem;margin:12px 0 4px}
+input,select,textarea{width:100%;font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:calc(var(--r) - 4px);padding:10px}
+textarea{resize:vertical}
+.g3{display:grid;grid-template-columns:1fr 1.6fr 1.2fr;gap:8px}
+.btn,.ghost{display:block;text-align:center;text-decoration:none;font:inherit;font-weight:700;border-radius:var(--r);padding:12px 16px;cursor:pointer;border:1px solid var(--accent);margin-top:12px;width:100%}
+.btn{background:var(--accent);color:var(--on)}
+.ghost{background:none;color:var(--accent)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.two .ghost{margin-top:8px}
+.sm{width:auto;display:inline-block;padding:6px 12px;margin:8px 8px 0 0;font-size:.9rem}
+.sw{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sw button{width:34px;height:34px;border-radius:50%;border:3px solid var(--card);box-shadow:0 0 0 1px var(--line);cursor:pointer}
+.sw button.on{box-shadow:0 0 0 3px var(--text)}
+.sw input{width:48px;height:36px;padding:2px}
+.seg{display:flex;gap:6px}.seg .ghost{margin-top:0;padding:8px}.seg .ghost.on{background:var(--accent);color:var(--on)}
+.err{color:#d92d4b;font-size:.9rem;min-height:1.2em;margin:8px 0 0}
+.empty{text-align:center;color:var(--muted);padding:28px 8px}
+.ov{position:fixed;inset:0;background:rgba(10,10,25,.55);display:flex;align-items:flex-end;justify-content:center;z-index:5;padding:12px;padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.ov[hidden]{display:none}
+.dlg{background:var(--card);border-radius:calc(var(--r) + 6px);padding:20px;width:100%;max-width:480px;max-height:100%;overflow:auto}
+@media (min-width:600px){.ov{align-items:center}}
+</style>
+</head>
+<body>
+<main>
+<h1>🎂 Geburtstage</h1>
+<div class="tabs">
+<button class="tab" data-t="dash" onclick="go('dash')">Übersicht</button>
+<button class="tab" data-t="contacts" onclick="go('contacts')">Kontakte</button>
+<button class="tab" data-t="settings" onclick="go('settings')">Einstellungen</button>
+</div>
+<div id="v"></div>
+</main>
+<div class="ov" id="m" hidden><div class="dlg" id="dlg"></div></div>
+<script>
+const $=s=>document.querySelector(s);
+const MON=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+const FONTS={rund:'ui-rounded,"SF Pro Rounded",Nunito,system-ui,sans-serif',system:'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',serif:'Georgia,"Times New Roman",serif',mono:'ui-monospace,Menlo,Consolas,monospace'};
+const COL=["#5b4bdb","#d6336c","#e8590c","#0b8a6f","#1c7ed6","#212529"];
+const DEF={tpl:"Alles Gute zum Geburtstag, {name}! 🎉 Du wirst heute {alter} – ich wünsche dir einen wunderschönen Tag!",tpl2:"Alles Gute zum Geburtstag, {name}! 🎉 Ich wünsche dir einen wunderschönen Tag!",cc:"49",mode:"auto",accent:"#5b4bdb",font:"rund",radius:14};
+let S={...DEF},C=[],D={},tab="dash",ed=null,cur=null,Q=[];
+const snooze=new Set(),notified=new Set();
+function load(){try{const j=JSON.parse(localStorage.getItem("bday")||"{}");S={...DEF,...(j.s||{})};C=j.c||[];D=j.d||{}}catch(e){}}
+function save(){try{localStorage.setItem("bday",JSON.stringify({s:S,c:C,d:D}))}catch(e){}}
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const today=()=>{const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())};
+function bd(c,y){let d=c.d;if(c.m==2&&d==29&&!(y%4==0&&(y%100!=0||y%400==0)))d=28;return new Date(y,c.m-1,d)}
+function info(c){const t=today(),y=t.getFullYear();let n=bd(c,y);if(n<t)n=bd(c,y+1);const days=Math.round((n-t)/864e5);const turn=c.y?n.getFullYear()-c.y:null;return{days,turn,now:c.y?(days==0?turn:turn-1):null}}
+const dstr=c=>c.d+". "+MON[c.m-1]+(c.y?" "+c.y:"");
+const dtxt=n=>n==0?"Heute 🎉":n==1?"Morgen":"in "+n+" Tagen";
+function lum(h){const n=parseInt(h.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255}
+function apply(){const r=document.documentElement;S.mode=="auto"?r.removeAttribute("data-theme"):r.setAttribute("data-theme",S.mode);r.style.setProperty("--accent",S.accent);r.style.setProperty("--on",lum(S.accent)>.65?"#111":"#fff");r.style.setProperty("--r",S.radius+"px");r.style.setProperty("--font",FONTS[S.font]||FONTS.rund)}
+function go(t){tab=t;ed=null;view()}
+function view(){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.t==tab));({dash:rDash,contacts:rContacts,settings:rSet})[tab]($("#v"))}
+
+function row({c,i}){const age=c.y?"Aktuell "+i.now+" Jahre"+(i.days>0?" · wird "+i.turn:""):"Alter unbekannt";
+return `<button class="row ${i.days==0?"today":""}" onclick="openMsg('${c.id}')"><span class="av">${esc(c.n.trim().slice(0,1).toUpperCase())}</span><span class="grow"><b>${esc(c.n)}</b><span class="sub">${dstr(c)} · ${age}</span></span><span class="chip">${dtxt(i.days)}</span></button>`}
+function rDash(v){const L=C.map(c=>({c,i:info(c)})).sort((a,b)=>a.i.days-b.i.days);
+if(!L.length){v.innerHTML='<p class="empty">Noch keine Geburtstage eingetragen. Öffne „Kontakte“ und füge die erste Person hinzu.</p>';return}
+const f=L[0],n=L.filter(x=>x.i.days==f.i.days).map(x=>esc(x.c.n)).join(" & ");
+v.innerHTML=`<div class="hero"><div class="big">${f.i.days==0?"Heute":f.i.days}</div><p>${f.i.days==0?"hat Geburtstag: ":f.i.days==1?"Tag bis ":"Tage bis "}<b>${n}</b>${f.i.days==0?"":" Geburtstag hat"}${f.c.y&&f.i.days>0?" (wird "+f.i.turn+")":""}</p></div>`+L.map(row).join("")}
+
+function rContacts(v){const c=ed?C.find(x=>x.id==ed):{n:"",d:"",m:1,y:"",p:""};
+v.innerHTML=`<div class="card"><h2>${ed?"Kontakt bearbeiten":"Kontakt hinzufügen"}</h2>
+<label for="fn">Name</label><input id="fn" value="${esc(c.n)}" autocomplete="off">
+<label>Geburtstag (Jahr ist optional)</label><div class="g3"><input id="fd" type="number" min="1" max="31" placeholder="Tag" value="${c.d}"><select id="fm">${MON.map((m,i)=>`<option value="${i+1}" ${c.m==i+1?"selected":""}>${m}</option>`).join("")}</select><input id="fy" type="number" placeholder="Jahr" value="${c.y||""}"></div>
+<label for="fp">WhatsApp-Nummer (optional)</label><input id="fp" type="tel" placeholder="z. B. 0171 1234567" value="${esc(c.p||"")}">
+<p class="sub">Ohne Nummer wählst du den Chat beim Senden in WhatsApp selbst aus.</p>
+<p class="err" id="err"></p><button class="btn" onclick="saveC()">${ed?"Änderungen speichern":"Kontakt speichern"}</button>${ed?'<button class="ghost" onclick="go(\'contacts\')">Abbrechen</button>':""}</div>`+
+[...C].sort((a,b)=>a.n.localeCompare(b.n,"de")).map(x=>`<div class="card"><b>${esc(x.n)}</b><div class="sub">${dstr(x)}${x.p?" · "+esc(x.p):""}</div><button class="ghost sm" onclick="edit('${x.id}')">Bearbeiten</button><button class="ghost sm" onclick="del(this,'${x.id}')">Löschen</button></div>`).join("")}
+function edit(id){ed=id;rContacts($("#v"));scrollTo(0,0)}
+function del(b,id){if(!b.dataset.s){b.dataset.s=1;b.textContent="Wirklich löschen?";return}C=C.filter(x=>x.id!=id);save();check();rContacts($("#v"))}
+function saveC(){const n=$("#fn").value.trim(),d=+$("#fd").value,m=+$("#fm").value,y=+$("#fy").value||null,p=$("#fp").value.trim(),e=$("#err");
+if(!n||!d||d<1||d>new Date(2024,m,0).getDate()){e.textContent="Bitte gib einen Namen und ein gültiges Datum ein.";return}
+if(y&&(y<1900||y>today().getFullYear())){e.textContent="Das Jahr muss zwischen 1900 und heute liegen – oder bleibt leer.";return}
+if(ed)Object.assign(C.find(x=>x.id==ed),{n,d,m,y,p});else C.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),n,d,m,y,p});
+ed=null;save();check();rContacts($("#v"))}
+
+function wa(c,t){let p=(c.p||"").replace(/[^\d+]/g,"");if(p[0]=="+")p=p.slice(1);else if(p.startsWith("00"))p=p.slice(2);else if(p[0]=="0")p=S.cc+p.slice(1);return"https://wa.me/"+p.replace(/\D/g,"")+"?text="+encodeURIComponent(t)}
+function fill(c){const i=info(c);return(c.y?S.tpl:S.tpl2).split("{name}").join(c.n).split("{alter}").join(c.y?i.now:"")}
+function openMsg(id){const c=C.find(x=>x.id==id);if(!c)return;cur=c;const i=info(c),t=fill(c);
+$("#dlg").innerHTML=`<h2>🎂 ${esc(c.n)}${i.days==0?" hat heute Geburtstag":""}</h2><p class="sub">${dstr(c)}${c.y?" · "+(i.days==0?"wird heute "+i.turn:"aktuell "+i.now+" Jahre"):""}</p>
+<label for="mt">Nachricht (anpassbar)</label><textarea id="mt" rows="5" oninput="$('#wl').href=wa(cur,this.value)">${esc(t)}</textarea>
+<a class="btn" id="wl" target="_blank" rel="noopener" href="${wa(c,t)}" onclick="setTimeout(done,300)">Per WhatsApp senden</a>
+<div class="two"><button class="ghost" onclick="done()">Erledigt</button><button class="ghost" onclick="closeM()">Später</button></div>`;
+$("#m").hidden=false}
+function next(){Q.length?openMsg(Q.shift()):$("#m").hidden=true}
+function done(){if(cur){D[cur.id+"-"+today().getFullYear()]=1;save()}next()}
+function closeM(){if(cur)snooze.add(cur.id);Q.forEach(i=>snooze.add(i));Q=[];$("#m").hidden=true}
+function check(){const y=today().getFullYear(),L=C.filter(c=>info(c).days==0&&!D[c.id+"-"+y]);
+document.title=(L.length?"🎂 ("+L.length+") ":"")+"Geburtstage";
+L.forEach(c=>{if(!notified.has(c.id+y)){notified.add(c.id+y);try{if(Notification.permission=="granted")new Notification("🎂 "+c.n+" hat Geburtstag",{body:"Öffne die App, um zu gratulieren."})}catch(e){}}});
+const N=L.filter(c=>!snooze.has(c.id));if($("#m").hidden&&N.length){Q=N.map(c=>c.id);next()}}
+
+function set(k,v){S[k]=v;save();apply()}
+function rSet(v){const nt=typeof Notification=="undefined"?"nicht verfügbar":Notification.permission=="granted"?"aktiv":Notification.permission=="denied"?"blockiert":"aus";
+v.innerHTML=`<div class="card"><h2>Design</h2><label>Darstellung</label><div class="seg">${[["auto","Automatisch"],["light","Hell"],["dark","Dunkel"]].map(([k,n])=>`<button class="ghost ${S.mode==k?"on":""}" onclick="set('mode','${k}');rSet($('#v'))">${n}</button>`).join("")}</div>
+<label>Akzentfarbe</label><div class="sw">${COL.map(c=>`<button style="background:${c}" class="${S.accent==c?"on":""}" aria-label="${c}" onclick="set('accent','${c}');rSet($('#v'))"></button>`).join("")}<input type="color" value="${S.accent}" aria-label="Eigene Farbe" oninput="set('accent',this.value)"></div>
+<label for="sf">Schriftart</label><select id="sf" onchange="set('font',this.value)">${[["rund","Rund"],["system","System"],["serif","Serif"],["mono","Monospace"]].map(([k,n])=>`<option value="${k}" ${S.font==k?"selected":""}>${n}</option>`).join("")}</select>
+<label for="sr">Eckenradius</label><input id="sr" type="range" min="0" max="26" value="${S.radius}" oninput="set('radius',+this.value)"></div>
+<div class="card"><h2>WhatsApp-Nachricht</h2><p class="sub">Variablen: {name} und {alter} (aktuelles Alter, am Geburtstag das neue Alter).</p>
+<label for="t1">Text, wenn das Geburtsjahr bekannt ist</label><textarea id="t1" rows="3" oninput="set('tpl',this.value)">${esc(S.tpl)}</textarea>
+<label for="t2">Text ohne Geburtsjahr</label><textarea id="t2" rows="3" oninput="set('tpl2',this.value)">${esc(S.tpl2)}</textarea>
+<label for="cc">Ländervorwahl für Nummern mit führender 0</label><input id="cc" inputmode="numeric" value="${esc(S.cc)}" oninput="set('cc',this.value.replace(/\\D/g,''))"></div>
+<div class="card"><h2>Benachrichtigungen</h2><p class="sub">Status: ${nt}. Die App meldet Geburtstage, solange sie geöffnet ist, und zeigt beim Öffnen das Popup.</p><button class="btn" onclick="askN()">Benachrichtigungen aktivieren</button></div>
+<div class="card"><h2>Sicherung</h2><p class="sub">Deine Daten liegen nur in diesem Browser. Kopiere die Sicherung, um sie woanders einzufügen.</p><textarea id="bk" rows="3"></textarea>
+<div class="two"><button class="ghost" onclick="exp()">Sicherung erstellen</button><button class="ghost" onclick="imp()">Sicherung einlesen</button></div><p class="err" id="be"></p></div>`}
+function askN(){try{Notification.requestPermission().then(()=>rSet($("#v")))}catch(e){alert("Benachrichtigungen sind in diesem Browser nicht verfügbar.")}}
+function exp(){const t=JSON.stringify({s:S,c:C,d:D});$("#bk").value=t;$("#bk").select();try{navigator.clipboard.writeText(t)}catch(e){}}
+function imp(){try{const j=JSON.parse($("#bk").value);if(!Array.isArray(j.c))throw 0;S={...DEF,...(j.s||{})};C=j.c;D=j.d||{};save();apply();check();rSet($("#v"));$("#be").textContent="Sicherung eingelesen."}catch(e){$("#be").textContent="Das sieht nicht nach einer gültigen Sicherung aus."}}
+
+load();apply();view();check();
+setInterval(check,60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){check();if(tab=="dash")view()}});
+</script>
+</body>
+</html>
